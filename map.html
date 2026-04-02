@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇨🇿 Prag — Cedrics Karte</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; }
+  #map { width: 100%; height: 65vh; min-height: 400px; }
+  .header { background: linear-gradient(135deg, #1a1a2e, #0f3460); padding: 16px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  .header h1 { font-size: 1.4em; color: #fff; }
+  .header p { color: #aaa; font-size: 0.9em; }
+  .legend { padding: 16px 20px; max-width: 800px; margin: 0 auto; }
+  .legend h3 { color: #4ecdc4; margin: 12px 0 8px; font-size: 1em; }
+  .loc { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1a1a2e; cursor: pointer; }
+  .loc:hover { background: #111; }
+  .loc .icon { font-size: 1.3em; min-width: 30px; text-align: center; }
+  .loc .info { flex: 1; }
+  .loc .name { font-weight: 600; color: #fff; font-size: 0.95em; }
+  .loc .desc { color: #888; font-size: 0.8em; }
+  .cat-hotel { border-left: 3px solid #e94560; padding-left: 8px; }
+  .cat-must { border-left: 3px solid #ffd700; padding-left: 8px; }
+  .cat-food { border-left: 3px solid #4ecdc4; padding-left: 8px; }
+  .cat-viertel { border-left: 3px solid #9b59b6; padding-left: 8px; }
+  .footer { text-align: center; padding: 20px; color: #555; font-size: 0.8em; }
+  
+  /* Custom popup */
+  .leaflet-popup-content-wrapper { background: #1a1a2e; color: #e0e0e0; border-radius: 8px; border: 1px solid #333; }
+  .leaflet-popup-tip { background: #1a1a2e; }
+  .leaflet-popup-content { margin: 10px 14px; font-family: inherit; }
+  .leaflet-popup-content b { color: #4ecdc4; }
+  .leaflet-popup-content .popup-cat { color: #e94560; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .filter-bar { display: flex; gap: 8px; justify-content: center; padding: 10px; flex-wrap: wrap; background: #111; }
+  .filter-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #333; background: #1a1a2e; color: #ccc; font-size: 0.8em; cursor: pointer; }
+  .filter-btn.active { background: #e94560; color: #fff; border-color: #e94560; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🇨🇿 Prag — Cedrics Karte</h1>
+  <p>2.–6. April 2026 • Tap auf Marker für Details</p>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterAll()">Alle</button>
+  <button class="filter-btn" onclick="filterCat('hotel')">🏨 Hotels</button>
+  <button class="filter-btn" onclick="filterCat('must')">⭐ Must-See</button>
+  <button class="filter-btn" onclick="filterCat('food')">🍻 Food & Bars</button>
+  <button class="filter-btn" onclick="filterCat('viertel')">🏘️ Viertel</button>
+</div>
+
+<div id="map"></div>
+
+<div class="legend">
+  <h3>🏨 Euer Hotel</h3>
+  <div class="loc cat-hotel" onclick="flyTo(50.0706, 14.4030, 16)">
+    <div class="icon">🏨</div>
+    <div class="info">
+      <div class="name">Mama Shelter Prague</div>
+      <div class="desc">Smíchov (Prag 5) — Euer Basecamp! Restaurant & Bar im Hotel</div>
+    </div>
+  </div>
+
+  <h3>⭐ Must-See Sehenswürdigkeiten</h3>
+  <div class="loc cat-must" onclick="flyTo(50.0870, 14.4206, 17)">
+    <div class="icon">🕰️</div>
+    <div class="info">
+      <div class="name">Altstädter Ring + Astronomische Uhr</div>
+      <div class="desc">Staré Město — Herz der Altstadt, morgens hingehen!</div>
+    </div>
+  </div>
+  <div class="loc cat-must" onclick="flyTo(50.0865, 14.4114, 17)">
+    <div class="icon">🌉</div>
+    <div class="info">
+      <div class="name">Karlsbrücke (Karlův most)</div>
+      <div class="desc">DAS Wahrzeichen — morgens früh für weniger Touristen</div>
+    </div>
+  </div>
+  <div class="loc cat-must" onclick="flyTo(50.0911, 14.4016, 16)">
+    <div class="icon">🏰</div>
+    <div class="info">
+      <div class="name">Prager Burg + Veitsdom</div>
+      <div class="desc">Hradčany — Größte Burganlage der Welt! Goldenes Gässchen</div>
+    </div>
+  </div>
+  <div class="loc cat-must" onclick="flyTo(50.0660, 14.4186, 16)">
+    <div class="icon">🏰</div>
+    <div class="info">
+      <div class="name">Vyšehrad</div>
+      <div class="desc">Geheimtipp! Ruhiger als Prager Burg, epische Aussicht. Perfekt Sa-Morgen</div>
+    </div>
+  </div>
+  <div class="loc cat-must" onclick="flyTo(50.0963, 14.4179, 16)">
+    <div class="icon">🌿</div>
+    <div class="info">
+      <div class="name">Letná Park + Biergarten</div>
+      <div class="desc">Bester Panoramablick der Stadt! Metronom + legendärer Biergarten</div>
+    </div>
+  </div>
+  <div class="loc cat-must" onclick="flyTo(50.0887, 14.4175, 17)">
+    <div class="icon">✡️</div>
+    <div class="info">
+      <div class="name">Josefov (Jüdisches Viertel)</div>
+      <div class="desc">Alter Friedhof, Synagogen, Kafka-Statue. Berührend & kompakt</div>
+    </div>
+  </div>
+
+  <h3>🍻 Food & Bar Viertel</h3>
+  <div class="loc cat-food" onclick="flyTo(50.0756, 14.4413, 15)">
+    <div class="icon">🍷</div>
+    <div class="info">
+      <div class="name">Vinohrady</div>
+      <div class="desc">DAS Foodie-Viertel! Craft Beer, Wine Bars, top Restaurants. Start: Jiřího z Poděbrad</div>
+    </div>
+  </div>
+  <div class="loc cat-food" onclick="flyTo(50.0836, 14.4502, 15)">
+    <div class="icon">🎸</div>
+    <div class="info">
+      <div class="name">Žižkov</div>
+      <div class="desc">Höchste Bar-Dichte! Alternativ, Street Art, TV-Turm mit Babys</div>
+    </div>
+  </div>
+  <div class="loc cat-food" onclick="flyTo(50.0900, 14.4245, 17)">
+    <div class="icon">🍺</div>
+    <div class="info">
+      <div class="name">Lokál (Dlouhá)</div>
+      <div class="desc">Bestes Tankbier der Stadt! Authentisch, beliebt bei Locals</div>
+    </div>
+  </div>
+
+  <h3>🏘️ Weitere Viertel</h3>
+  <div class="loc cat-viertel" onclick="flyTo(50.0706, 14.4030, 15)">
+    <div class="icon">🏠</div>
+    <div class="info">
+      <div class="name">Smíchov (Prag 5)</div>
+      <div class="desc">Euer Hotel-Viertel! Up-and-coming, Náplavka Ufer nebenan</div>
+    </div>
+  </div>
+  <div class="loc cat-viertel" onclick="flyTo(50.0990, 14.4352, 15)">
+    <div class="icon">🏭</div>
+    <div class="info">
+      <div class="name">Holešovice</div>
+      <div class="desc">Prags Brooklyn — DOX Kunst, Craft Breweries, Markthalle</div>
+    </div>
+  </div>
+  <div class="loc cat-viertel" onclick="flyTo(50.0753, 14.4140, 16)">
+    <div class="icon">🌊</div>
+    <div class="info">
+      <div class="name">Náplavka (Moldauufer)</div>
+      <div class="desc">Uferpromenade direkt bei eurem Hotel! Streetfood-Markt am Wochenende</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  🎩 Erstellt von Gaston • 2. April 2026<br>
+  Alle Koordinaten manuell geprüft. Tap auf Einträge um auf der Karte hinzuspringen.
+</div>
+
+<script>
+// Init map centered on Prague
+const map = L.map('map', { zoomControl: true }).setView([50.0833, 14.4200], 13);
+
+// Dark tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  maxZoom: 19
+}).addTo(map);
+
+// Custom icons
+function icon(emoji, size) {
+  return L.divIcon({
+    html: `<div style="font-size:${size || 24}px;text-shadow:0 2px 4px rgba(0,0,0,0.5);filter:drop-shadow(0 0 3px rgba(0,0,0,0.8));">${emoji}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -15],
+    className: ''
+  });
+}
+
+// All markers
+const markers = [];
+
+function addMarker(lat, lng, emoji, name, desc, cat) {
+  const m = L.marker([lat, lng], { icon: icon(emoji, 28) })
+    .bindPopup(`<div class="popup-cat">${cat}</div><b>${name}</b><br><span style="color:#aaa;font-size:0.85em;">${desc}</span>`)
+    .addTo(map);
+  m._cat = cat;
+  markers.push(m);
+  return m;
+}
+
+// 🏨 Hotel
+addMarker(50.0706, 14.4030, '🏨', 'Mama Shelter Prague', 'Euer Hotel! Smíchov, Prag 5', 'hotel');
+
+// ⭐ Must-See
+addMarker(50.0870, 14.4206, '🕰️', 'Altstädter Ring', 'Astronomische Uhr, Týn-Kirche. Morgens hingehen!', 'must');
+addMarker(50.0865, 14.4114, '🌉', 'Karlsbrücke', 'DAS Wahrzeichen — früh morgens für weniger Touristen', 'must');
+addMarker(50.0911, 14.4016, '🏰', 'Prager Burg + Veitsdom', 'Größte Burganlage der Welt! Goldenes Gässchen', 'must');
+addMarker(50.0660, 14.4186, '🏰', 'Vyšehrad', 'Geheimtipp! Ruhiger, epische Aussicht. Sa-Morgen perfekt', 'must');
+addMarker(50.0963, 14.4179, '🌿', 'Letná Park', 'Bester Panoramablick + legendärer Biergarten!', 'must');
+addMarker(50.0887, 14.4175, '✡️', 'Josefov', 'Jüdisches Viertel — Friedhof, Synagogen, Kafka', 'must');
+
+// 🍻 Food & Bars
+addMarker(50.0756, 14.4413, '🍷', 'Vinohrady', 'DAS Foodie-Viertel! Craft Beer, Wine Bars, Top-Restaurants', 'food');
+addMarker(50.0836, 14.4502, '🎸', 'Žižkov', 'Höchste Bar-Dichte! Alternativ, TV-Turm mit Babys', 'food');
+addMarker(50.0900, 14.4245, '🍺', 'Lokál (Dlouhá)', 'Bestes Tankbier! Authentisch, bei Locals beliebt', 'food');
+
+// 🏘️ Viertel
+addMarker(50.0990, 14.4352, '🏭', 'Holešovice', 'DOX Kunst, Craft Breweries, Markthalle — Prags Brooklyn', 'viertel');
+addMarker(50.0753, 14.4140, '🌊', 'Náplavka', 'Moldauufer — Streetfood-Markt am Wochenende! Nah am Hotel', 'viertel');
+
+// Fly to function
+window.flyTo = function(lat, lng, zoom) {
+  map.flyTo([lat, lng], zoom || 16, { duration: 1 });
+  // Open popup of nearest marker
+  markers.forEach(m => {
+    const pos = m.getLatLng();
+    if (Math.abs(pos.lat - lat) < 0.001 && Math.abs(pos.lng - lng) < 0.001) {
+      setTimeout(() => m.openPopup(), 600);
+    }
+  });
+};
+
+// Filter functions
+window.filterAll = function() {
+  markers.forEach(m => m.addTo(map));
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+};
+
+window.filterCat = function(cat) {
+  markers.forEach(m => {
+    if (m._cat === cat) m.addTo(map);
+    else map.removeLayer(m);
+  });
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+};
+
+// Hotel highlight — pulse effect via opening popup on load
+setTimeout(() => {
+  markers[0].openPopup();
+}, 1000);
+</script>
+
+</body>
+</html>
