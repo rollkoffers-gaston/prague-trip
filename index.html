@@ -15,7 +15,7 @@
   .container { max-width: 800px; margin: 0 auto; padding: 20px; }
   
   /* Navigation */
-  .nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 16px; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 16px; background: #111; border-bottom: 1px solid #222; }
   .nav a { padding: 6px 14px; border-radius: 20px; background: #1a1a2e; color: #ccc; text-decoration: none; font-size: 0.85em; border: 1px solid #333; }
   .nav a:hover, .nav a.active { background: #e94560; color: #fff; border-color: #e94560; }
   
@@ -353,19 +353,7 @@
 <div class="section" id="checklist">
   <div class="section-title">✅ Trip Checklist</div>
   
-  <h3 style="color:#4ecdc4; margin-bottom: 10px;">🧳 Packing</h3>
-  <ul class="checklist" id="pack-list">
-    <li onclick="toggle(this)"><div class="check"></div><span>Passport / ID card</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Phone charger + power bank</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Hiking shoes (sturdy, waterproof)</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Rain jacket / layers (5-12°C in April)</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Comfortable city walking shoes</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Czech Koruna (CZK) cash — some for small purchases</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Train tickets (Berlin→Prague, Prague→Děčín, Děčín→Berlin)</span></li>
-    <li onclick="toggle(this)"><div class="check"></div><span>Hotel confirmations (Mama Shelter + Mezní Louka)</span></li>
-  </ul>
-  
-  <h3 style="color:#4ecdc4; margin: 16px 0 10px;">📸 Photo Spots — Don't Forget!</h3>
+  <h3 style="color:#4ecdc4; margin-bottom: 10px;">📸 Photo Spots — Don't Forget!</h3>
   <ul class="checklist" id="photo-list">
     <li onclick="toggle(this)"><div class="check"></div><span>Charles Bridge at sunrise/sunset</span></li>
     <li onclick="toggle(this)"><div class="check"></div><span>Letná Park panorama (bridges + castle)</span></li>
