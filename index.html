@@ -3,479 +3,668 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🇨🇿 Prague & Děčín Trip — Apr 2–6, 2026</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<title>🇨🇿 Prague & Bohemian Switzerland — Travel Plan</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--bg:#0f0f0f;--card:#1a1a2e;--accent:#e94560;--accent2:#0f3460;--text:#eee;--muted:#888;--green:#4ade80;--amber:#fbbf24;--blue:#60a5fa;--selected:#1a3a1a;--selected-border:#4ade80}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0 0 80px}
-.hero{background:linear-gradient(135deg,#1a1a2e,#16213e 50%,#0f3460);padding:40px 20px;text-align:center;border-bottom:3px solid var(--accent)}
-.hero h1{font-size:2em;margin-bottom:8px}.hero .sub{color:var(--muted);font-size:1.1em}
-.container{max-width:800px;margin:0 auto;padding:0 16px}
-.overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0}
-.oc{background:var(--card);border-radius:12px;padding:16px;text-align:center}.oc .e{font-size:2em}.oc .l{color:var(--muted);font-size:.85em;margin-top:4px}.oc .v{font-weight:700;margin-top:2px}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.6; }
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  .hero h1 { font-size: 2em; color: #fff; margin-bottom: 8px; }
+  .hero .subtitle { color: #aaa; font-size: 1.1em; }
+  .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+  
+  /* Navigation */
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 16px; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
+  .nav a { padding: 6px 14px; border-radius: 20px; background: #1a1a2e; color: #ccc; text-decoration: none; font-size: 0.85em; border: 1px solid #333; }
+  .nav a:hover, .nav a.active { background: #e94560; color: #fff; border-color: #e94560; }
+  
+  /* Map */
+  #hero-map { width: 100%; height: 300px; border-bottom: 2px solid #333; }
+  .leaflet-popup-content-wrapper { background: #1a1a2e; color: #e0e0e0; border-radius: 8px; border: 1px solid #333; }
+  .leaflet-popup-tip { background: #1a1a2e; }
+  .leaflet-popup-content b { color: #4ecdc4; }
+  
+  /* Sections */
+  .section { margin: 24px 0; }
+  .section-title { font-size: 1.4em; color: #e94560; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #1a1a2e; }
+  
+  /* Day cards */
+  .day-card { background: #1a1a2e; border-radius: 12px; margin: 16px 0; padding: 20px; border-left: 4px solid #e94560; }
+  .day-card h2 { color: #e94560; font-size: 1.2em; margin-bottom: 12px; }
+  .day-card h3 { color: #4ecdc4; font-size: 1em; margin: 14px 0 6px; }
+  .tl { display: flex; gap: 12px; margin: 6px 0; padding: 8px 0; border-bottom: 1px solid #222; }
+  .tl:last-child { border-bottom: none; }
+  .tl .time { color: #e94560; font-weight: bold; min-width: 60px; font-size: 0.9em; }
+  .tl .ev { flex: 1; }
+  .tl .ev .t { font-weight: 600; color: #fff; }
+  .tl .ev .d { color: #999; font-size: 0.88em; margin-top: 2px; }
+  
+  /* Food cards */
+  .food-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .food { background: #16213e; border-radius: 10px; padding: 14px; border-left: 3px solid #ffd700; }
+  .food .name { font-weight: bold; color: #ffd700; font-size: 1.05em; }
+  .food .type { color: #e94560; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; margin: 2px 0 6px; }
+  .food .desc { color: #bbb; font-size: 0.9em; }
+  .food .warn { color: #e94560; font-size: 0.8em; margin-top: 4px; }
+  
+  /* Sightseeing */
+  .sight { background: #16213e; border-radius: 10px; padding: 14px; margin: 10px 0; }
+  .sight.must { border-left: 3px solid #ffd700; }
+  .sight.nice { border-left: 3px solid #4ecdc4; }
+  .sight .name { font-weight: bold; color: #fff; font-size: 1em; }
+  .sight .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; margin-left: 8px; }
+  .sight .badge.must-badge { background: #ffd700; color: #000; }
+  .sight .badge.nice-badge { background: #4ecdc4; color: #000; }
+  .sight .loc { color: #888; font-size: 0.8em; }
+  .sight .desc { color: #bbb; font-size: 0.9em; margin-top: 4px; }
+  .sight .tip { color: #4ecdc4; font-size: 0.85em; margin-top: 4px; }
+  
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 10px 12px; margin: 4px 0; background: #16213e; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .checklist li:hover { background: #1a2a3e; }
+  .checklist li .check { width: 22px; height: 22px; border: 2px solid #4ecdc4; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .checklist li.done .check { background: #4ecdc4; }
+  .checklist li.done .check::after { content: '✓'; color: #000; font-weight: bold; font-size: 14px; }
+  .checklist li.done span { text-decoration: line-through; color: #666; }
+  
+  /* Czech phrases */
+  .phrase { background: #16213e; border-radius: 10px; padding: 14px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .phrase .text { flex: 1; }
+  .phrase .czech { font-weight: bold; color: #4ecdc4; font-size: 1.05em; }
+  .phrase .phonetic { color: #ffd700; font-size: 0.9em; font-style: italic; }
+  .phrase .english { color: #888; font-size: 0.85em; }
+  .phrase .play-btn { background: #e94560; border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2em; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .phrase .play-btn:hover { background: #c73650; }
+  
+  /* Tips */
+  .tip-box { background: #1a2a1a; border: 1px solid #2d5a2d; border-radius: 8px; padding: 14px; margin: 12px 0; }
+  .tip-box .label { color: #4ecdc4; font-weight: bold; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
+  .warn-box { background: #2a1a1a; border: 1px solid #5a2d2d; border-radius: 8px; padding: 14px; margin: 12px 0; }
+  .warn-box .label { color: #e94560; font-weight: bold; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Tabs */
-.tabs{display:flex;gap:0;margin:24px 0 0;border-bottom:2px solid #333}
-.tab{flex:1;padding:12px;text-align:center;cursor:pointer;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;transition:all .2s}
-.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-content{display:none}.tab-content.active{display:block}
-
-/* Filter */
-.filter-bar{background:var(--card);border-radius:12px;padding:12px 16px;margin:16px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.filter-bar .label{color:var(--muted);font-size:.85em}
-.fbtn{border:1px solid #444;background:transparent;color:var(--text);padding:5px 12px;border-radius:20px;font-size:.8em;cursor:pointer;transition:all .2s}
-.fbtn:hover{border-color:var(--accent)}.fbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* Summary */
-.summary{background:linear-gradient(135deg,#0f3460,#1a1a2e);border:2px solid var(--green);border-radius:12px;padding:20px;margin:20px 0}
-.summary h3{color:var(--green);margin-bottom:12px}
-.summary ul{list-style:none}.summary li{padding:3px 0;font-size:.9em}
-.summary .day-label{color:var(--amber);font-weight:700;padding-top:8px}
-.summary .empty{color:var(--muted);font-style:italic}
-
-/* Map */
-.map-wrap{margin:20px 0}
-#map{height:400px;border-radius:12px;border:2px solid #333}
-
-/* Items */
-.item{background:#1e293b;border-radius:10px;padding:14px 16px;margin:10px 0;border-left:4px solid #444;cursor:pointer;transition:all .25s;position:relative}
-.item:hover{border-left-color:var(--amber);background:#1e2d42}
-.item.sel{border-left-color:var(--selected-border);background:var(--selected)}
-.item.sel::after{content:'✅';position:absolute;top:12px;right:14px;font-size:1.1em}
-.item .tg{display:inline-block;font-size:.7em;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;margin-bottom:6px;font-weight:600;text-transform:uppercase}
-.item .tg.food{background:var(--amber);color:#000}.item .tg.bar{background:#a855f7}.item .tg.gem{background:#14b8a6}.item .tg.exp{background:var(--blue)}.item .tg.must{background:var(--accent)}
-.item h4{margin-bottom:4px;padding-right:30px}.item p{color:var(--muted);font-size:.9em}.item .tp{color:var(--amber);font-size:.8em;font-weight:600}
-.item .lnk{margin-top:4px}.item .lnk a{color:var(--blue);text-decoration:none;font-size:.85em}
-.item .lnk a:hover{text-decoration:underline}
-
-/* Day assign */
-.day-assign{margin-top:8px;display:flex;gap:4px;flex-wrap:wrap}
-.day-assign .da{border:1px solid #555;background:transparent;color:var(--muted);padding:3px 10px;border-radius:12px;font-size:.75em;cursor:pointer;transition:all .2s}
-.day-assign .da:hover{border-color:var(--amber);color:var(--text)}
-.day-assign .da.act{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* District section */
-.district{margin:20px 0}.district h3{font-size:1.1em;padding:10px 0 6px;border-bottom:1px solid #333;margin-bottom:8px;color:var(--amber)}
-
-/* Day sections */
-.day{margin:28px 0}
-.day-header{background:var(--card);border-radius:12px 12px 0 0;padding:16px 20px;border-left:4px solid var(--accent);display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
-.day-header h2{font-size:1.2em}.day-header .w{font-size:.9em;color:var(--amber)}
-.day-body{background:var(--card);border-radius:0 0 12px 12px;padding:0 20px 20px}.day-body.collapsed{display:none}
-
-/* Timeline */
-.tl{position:relative;padding-left:24px}.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:#333}
-.te{position:relative;margin-bottom:20px}.te::before{content:'';position:absolute;left:-20px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
-.te.tr::before{background:var(--blue)}.te.fd::before{background:var(--amber)}.te.ex::before{background:var(--green)}.te.ht::before{background:#c084fc}
-.te .t{font-size:.85em;color:var(--accent);font-weight:600}.te .n{font-weight:700;margin:2px 0}.te .d{color:var(--muted);font-size:.9em}
-.te .l a{color:var(--blue);text-decoration:none;font-size:.85em}
-
-/* Links grid */
-.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.link-btn{display:block;background:var(--accent2);color:var(--text);text-decoration:none;padding:12px;border-radius:8px;text-align:center;font-size:.9em;font-weight:600;transition:background .2s}
-.link-btn:hover{background:#1a4a8a}
-
-/* Allergen */
-.alg{background:#3b1010;border:1px solid #ef4444;border-radius:10px;padding:14px 16px;margin:16px 0}
-.alg h4{color:#ef4444;margin-bottom:6px}.alg p{color:#fca5a5;font-size:.9em}
-
-.stitle{font-size:1.2em;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #333}
-
-/* Checklist */
-.cl{list-style:none}.cl li{padding:8px 0;border-bottom:1px solid #222;display:flex;align-items:center;gap:10px}
-.cl input[type=checkbox]{width:20px;height:20px;accent-color:var(--green);flex-shrink:0}.cl .done{text-decoration:line-through;color:var(--muted)}
-
-/* Notes */
-.notes{background:var(--card);border-radius:12px;padding:20px;margin:24px 0}
-.notes h3{margin-bottom:12px;border-bottom:1px solid #333;padding-bottom:8px}
-.notes textarea{width:100%;background:#111;color:var(--text);border:1px solid #333;border-radius:8px;padding:12px;min-height:100px;font-family:inherit;font-size:.9em;resize:vertical}
-
-/* Info item (non-clickable) */
-.info-item{border-left-color:var(--blue);cursor:default}
-
-@media(max-width:500px){.hero h1{font-size:1.5em}.overview{grid-template-columns:1fr 1fr}.links-grid{grid-template-columns:1fr}#map{height:300px}}
+  /* Hiking */
+  .hike { background: #1a2e1a; border-radius: 10px; padding: 16px; margin: 10px 0; border: 1px solid #2d5a2d; }
+  .hike .name { color: #4ecdc4; font-weight: bold; font-size: 1em; }
+  .hike .stats { color: #888; font-size: 0.85em; margin: 4px 0; }
+  .hike .desc { color: #bbb; font-size: 0.9em; }
+  
+  .footer { text-align: center; padding: 30px; color: #555; font-size: 0.85em; border-top: 1px solid #222; margin-top: 30px; }
+  a { color: #4ecdc4; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul { padding-left: 20px; }
+  li { margin: 4px 0; color: #ccc; }
+  @media (min-width: 600px) { .food-grid { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
+
 <div class="hero">
-<h1>🇨🇿 Prague & Bohemian Switzerland</h1>
-<div class="sub">Cedric & Mylène — Apr 2–6, 2026</div>
-<div style="color:var(--muted);font-size:.9em;margin-top:8px">👆 Tap spots to select · Assign them to days · See everything on the map</div>
+  <h1>🇨🇿 Prague & Bohemian Switzerland</h1>
+  <p class="subtitle">April 2–6, 2026 — Cedric & Mylène</p>
 </div>
+
+<nav class="nav">
+  <a href="#map-section">🗺️ Map</a>
+  <a href="#schedule">📅 Schedule</a>
+  <a href="#sightseeing">⭐ Must-See</a>
+  <a href="#food">🍽️ Food</a>
+  <a href="#hiking">🥾 Hiking</a>
+  <a href="#checklist">✅ Checklist</a>
+  <a href="#czech">🗣️ Czech</a>
+  <a href="#practical">💡 Tips</a>
+</nav>
+
+<!-- ===== MAP ===== -->
+<div id="map-section">
+  <div id="hero-map"></div>
+</div>
+
 <div class="container">
 
-<!-- Summary -->
-<div class="summary" id="summaryPanel">
-<h3>📋 Your Plan (<span id="selCount">0</span> selected)</h3>
-<ul id="sumList"><li class="empty">Tap spots, restaurants & activities below to build your plan!</li></ul>
+<!-- ===== SCHEDULE ===== -->
+<div class="section" id="schedule">
+  <div class="section-title">📅 Day-by-Day Schedule</div>
+
+  <div class="day-card">
+    <h2>Thu Apr 2 — Arrival in Prague</h2>
+    <div class="tl"><span class="time">17:28</span><div class="ev"><div class="t">🚄 Train Berlin → Prague</div><div class="d">EC via Dresden & Ústí nad Labem • Arrives ~21:25 Praha hl.n.</div></div></div>
+    <div class="tl"><span class="time">~21:30</span><div class="ev"><div class="t">🏨 Check-in Mama Shelter Prague</div><div class="d">Smíchov (Prague 5) — trendy neighborhood, great hotel bar & restaurant</div></div></div>
+    <div class="tl"><span class="time">Evening</span><div class="ev"><div class="t">🍻 First Czech beer!</div><div class="d">Mama Shelter bar or local spot in Smíchov to unwind</div></div></div>
+  </div>
+
+  <div class="day-card">
+    <h2>Fri Apr 3 — Exploring Prague</h2>
+    <div class="tl"><span class="time">Morning</span><div class="ev"><div class="t">☕ Old Town (Staré Město)</div><div class="d">Old Town Square, Astronomical Clock, coffee break → then Josefov (Jewish Quarter)</div></div></div>
+    <div class="tl"><span class="time">Midday</span><div class="ev"><div class="t">🏰 Charles Bridge → Malá Strana → Prague Castle</div><div class="d">Cross the bridge early! St. Vitus Cathedral, Golden Lane. Walk down through gardens.</div></div></div>
+    <div class="tl"><span class="time">Afternoon</span><div class="ev"><div class="t">🌿 Letná Park & Beer Garden</div><div class="d">Best panoramic view of Prague! Giant metronome + legendary beer garden</div></div></div>
+    <div class="tl"><span class="time">Evening</span><div class="ev"><div class="t">🍽️ Dinner in Vinohrady or Žižkov</div><div class="d">Best food & bar districts — local vibes, no tourist traps</div></div></div>
+  </div>
+
+  <div class="day-card">
+    <h2>Sat Apr 4 — Prague → Bohemian Switzerland</h2>
+    <div class="tl"><span class="time">Morning</span><div class="ev"><div class="t">🔍 Vyšehrad or Náplavka</div><div class="d">Vyšehrad fortress (quieter than Castle, epic views!) or riverbank market</div></div></div>
+    <div class="tl"><span class="time">12:00</span><div class="ev"><div class="t">🧳 Check-out Mama Shelter</div><div class="d">Pack up, grab lunch nearby</div></div></div>
+    <div class="tl"><span class="time">16:31</span><div class="ev"><div class="t">🚄 Train Prague → Děčín</div><div class="d">Arrives 17:58 • Beautiful ride along the Elbe river!</div></div></div>
+    <div class="tl"><span class="time">~18:30</span><div class="ev"><div class="t">🏨 Hotel Mezní Louka</div><div class="d">Heart of Bohemian Switzerland National Park • Bus 434 from Děčín (~35 min)</div></div></div>
+  </div>
+
+  <div class="day-card">
+    <h2>Sun Apr 5 — Hiking Bohemian Switzerland</h2>
+    <div class="tl"><span class="time">Morning</span><div class="ev"><div class="t">🥾 Pravčická Gate (Prebischtor)</div><div class="d">Europe's largest natural sandstone arch! 3km from Mezní Louka via Gabriela's Trail</div></div></div>
+    <div class="tl"><span class="time">Afternoon</span><div class="ev"><div class="t">🛶 Edmund Gorge (boat ride)</div><div class="d">Spectacular boat trip through narrow sandstone gorges</div></div></div>
+    <div class="tl"><span class="time">Evening</span><div class="ev"><div class="t">🍽️ Dinner at hotel or Hřensko</div><div class="d">Relax after a day of hiking!</div></div></div>
+  </div>
+
+  <div class="day-card">
+    <h2>Mon Apr 6 — Return to Berlin</h2>
+    <div class="tl"><span class="time">Morning</span><div class="ev"><div class="t">🌄 Quick morning hike or Děčín Castle</div><div class="d">Děčín Castle sits right on the Elbe — worth a look!</div></div></div>
+    <div class="tl"><span class="time">14:02</span><div class="ev"><div class="t">🚆 Train Děčín → Berlin</div><div class="d">Arrives 16:28 Berlin Hbf</div></div></div>
+    <div class="tl"><span class="time">19:15</span><div class="ev"><div class="t">💪 Full Body Strength — LIFTED Boxi</div><div class="d">Back and straight to the gym! 💪 Until 20:00</div></div></div>
+  </div>
 </div>
 
-<!-- Map -->
-<h3 class="stitle" style="cursor:pointer" onclick="document.getElementById('mapWrap').style.display=document.getElementById('mapWrap').style.display==='none'?'block':'none'">🗺️ Map (tap to toggle)</h3>
-<div class="map-wrap" id="mapWrap"><div id="map"></div></div>
-
-<!-- Tabs -->
-<div class="tabs">
-<div class="tab active" onclick="switchTab('days',this)">📅 By Day</div>
-<div class="tab" onclick="switchTab('districts',this)">🏘️ By District</div>
+<!-- ===== MUST-SEE SIGHTSEEING ===== -->
+<div class="section" id="sightseeing">
+  <div class="section-title">⭐ Must-See Sightseeing</div>
+  
+  <h3 style="color:#ffd700; margin: 12px 0 8px;">🏆 Top 5 — Don't Miss These</h3>
+  
+  <div class="sight must">
+    <div class="name">🏰 Prague Castle + St. Vitus Cathedral <span class="badge must-badge">MUST</span></div>
+    <div class="loc">📍 Hradčany — west bank hilltop</div>
+    <div class="desc">World's largest ancient castle complex. St. Vitus Cathedral is jaw-dropping inside. Don't skip the Golden Lane (tiny colorful houses, Kafka lived in #22).</div>
+    <div class="tip">💡 Go in the morning to avoid crowds. Free to walk the grounds; ticket needed for interiors (~250 CZK).</div>
+  </div>
+  
+  <div class="sight must">
+    <div class="name">🌉 Charles Bridge (Karlův most) <span class="badge must-badge">MUST</span></div>
+    <div class="loc">📍 Connects Old Town ↔ Malá Strana</div>
+    <div class="desc">Iconic 14th-century bridge with 30 baroque statues. Best crossed early morning or at sunset for photos. Street musicians, artists, incredible views.</div>
+    <div class="tip">💡 Walk it at sunrise (~6:30 AM) for an almost empty bridge + golden light.</div>
+  </div>
+  
+  <div class="sight must">
+    <div class="name">🕰️ Old Town Square + Astronomical Clock <span class="badge must-badge">MUST</span></div>
+    <div class="loc">📍 Staré Město — city center</div>
+    <div class="desc">Medieval square with the famous clock (every hour it does a little show with apostle figures), Týn Church, and colorful baroque buildings.</div>
+    <div class="tip">💡 Watch the clock strike the hour, but don't eat at the restaurants here — tourist trap prices!</div>
+  </div>
+  
+  <div class="sight must">
+    <div class="name">🌿 Letná Park + Beer Garden <span class="badge must-badge">MUST</span></div>
+    <div class="loc">📍 Letná — north of the river</div>
+    <div class="desc">THE best panoramic view of Prague — all the bridges, the castle, the red rooftops. Giant metronome where a Stalin statue used to stand. Amazing beer garden.</div>
+    <div class="tip">💡 Perfect afternoon spot. Grab a beer (50 CZK) and enjoy the view.</div>
+  </div>
+  
+  <div class="sight must">
+    <div class="name">🏰 Vyšehrad <span class="badge must-badge">MUST</span></div>
+    <div class="loc">📍 South of city center — above the Vltava</div>
+    <div class="desc">Ancient fortress with incredible views, much quieter than Prague Castle. Cemetery where Dvořák and other Czech legends are buried. Beautiful basilica.</div>
+    <div class="tip">💡 Perfect for Saturday morning before heading to Děčín. Free entry to the grounds!</div>
+  </div>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 8px;">👍 Also Great If You Have Time</h3>
+  
+  <div class="sight nice">
+    <div class="name">✡️ Jewish Quarter (Josefov) <span class="badge nice-badge">WORTH IT</span></div>
+    <div class="loc">📍 Next to Old Town</div>
+    <div class="desc">Old Jewish Cemetery (hauntingly beautiful), synagogues, Franz Kafka statue. Compact — takes about 1-2 hours.</div>
+  </div>
+  
+  <div class="sight nice">
+    <div class="name">🗼 Žižkov TV Tower <span class="badge nice-badge">WORTH IT</span></div>
+    <div class="loc">📍 Žižkov</div>
+    <div class="desc">Love it or hate it — a brutalist tower with giant crawling baby sculptures by David Černý. Observation deck + sky bar at the top.</div>
+  </div>
+  
+  <div class="sight nice">
+    <div class="name">🎭 Dancing House <span class="badge nice-badge">PHOTO STOP</span></div>
+    <div class="loc">📍 Nové Město — along the river</div>
+    <div class="desc">Gehry-designed "Fred & Ginger" building. Rooftop bar with views. Quick photo stop, 5 min from Náplavka.</div>
+  </div>
+  
+  <div class="sight nice">
+    <div class="name">📖 Strahov Library <span class="badge nice-badge">HIDDEN GEM</span></div>
+    <div class="loc">📍 Near Prague Castle</div>
+    <div class="desc">Two stunning baroque library halls — looks like something from a movie. Also has a monastery brewery!</div>
+  </div>
+  
+  <div class="sight nice">
+    <div class="name">🌊 Náplavka Riverbank <span class="badge nice-badge">CHILL</span></div>
+    <div class="loc">📍 Along the Vltava — near your hotel!</div>
+    <div class="desc">Prague's favorite hangout along the river. Weekend farmers market, food boats, and drinks on the water.</div>
+  </div>
 </div>
 
-<!-- Filter -->
-<div class="filter-bar">
-<span class="label">Filter:</span>
-<button class="fbtn active" onclick="filterCat('all',this)">All</button>
-<button class="fbtn" onclick="filterCat('selected',this)">✅ Selected</button>
-<button class="fbtn" onclick="filterCat('food',this)">🍽️ Food</button>
-<button class="fbtn" onclick="filterCat('spot',this)">📍 Spots</button>
-<button class="fbtn" onclick="filterCat('experience',this)">🎯 Exp</button>
+<!-- ===== FOOD ===== -->
+<div class="section" id="food">
+  <div class="section-title">🍽️ Czech Food — What to Try</div>
+  
+  <p style="color:#aaa; margin-bottom: 16px;">Czech cuisine is hearty, meaty, and beer-friendly. Here's what's actually good vs. tourist bait:</p>
+  
+  <h3 style="color:#ffd700; margin: 12px 0 8px;">⭐ Must-Try Dishes</h3>
+  <div class="food-grid">
+    <div class="food">
+      <div class="name">🥩 Svíčková na smetaně</div>
+      <div class="type">THE National Dish</div>
+      <div class="desc">Marinated beef sirloin in creamy vegetable sauce with bread dumplings (knedlíky) and cranberry sauce. Comfort food perfection.</div>
+    </div>
+    <div class="food">
+      <div class="name">🍖 Vepřo-knedlo-zelo</div>
+      <div class="type">Classic Czech</div>
+      <div class="desc">Roast pork with dumplings and sauerkraut. Simple but incredibly satisfying. Every Czech grandma's recipe.</div>
+    </div>
+    <div class="food">
+      <div class="name">🧀 Smažený sýr</div>
+      <div class="type">Czech Comfort Food</div>
+      <div class="desc">Deep-fried cheese (usually Edam) with tartar sauce and fries. It's basically a cheese schnitzel. Street food classic.</div>
+    </div>
+    <div class="food">
+      <div class="name">🍺 Czech Beer (Pivo)</div>
+      <div class="type">Religion, basically</div>
+      <div class="desc">Czechs drink more beer per capita than anyone. Try Pilsner Urquell, Kozel, Staropramen — but always from the TAP (tankové pivo), never bottled.</div>
+    </div>
+    <div class="food">
+      <div class="name">🥟 Knedlíky (Dumplings)</div>
+      <div class="type">Side Dish Essential</div>
+      <div class="desc">Bread dumplings or potato dumplings — served with everything. The sweet version (ovocné knedlíky) filled with fruit is amazing as dessert.</div>
+    </div>
+    <div class="food">
+      <div class="name">🍯 Medovník</div>
+      <div class="type">Dessert</div>
+      <div class="desc">Czech honey cake — layers of honey sponge with cream. Delicate and not too sweet. Find it in any traditional café.</div>
+    </div>
+  </div>
+  
+  <h3 style="color:#e94560; margin: 16px 0 8px;">⚠️ Tourist Traps to Avoid</h3>
+  <div class="food-grid">
+    <div class="food" style="border-left-color: #e94560;">
+      <div class="name">🥨 Trdelník</div>
+      <div class="type" style="color:#e94560;">Tourist Trap!</div>
+      <div class="desc">Those chimney cake things everywhere? They're actually Hungarian, not Czech at all. Locals don't eat them. Skip it.</div>
+    </div>
+    <div class="food" style="border-left-color: #e94560;">
+      <div class="name">🍽️ Old Town Square restaurants</div>
+      <div class="type" style="color:#e94560;">Avoid</div>
+      <div class="desc">Overpriced, mediocre food. Walk 5 minutes in any direction for half the price and double the quality.</div>
+    </div>
+  </div>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 8px;">📍 Where to Eat</h3>
+  <div class="food-grid">
+    <div class="food" style="border-left-color: #4ecdc4;">
+      <div class="name">🍺 Lokál (Dlouhá st.)</div>
+      <div class="desc">Best tankové pivo (tank beer) in Prague. Authentic Czech food, packed with locals. Reservations recommended!</div>
+    </div>
+    <div class="food" style="border-left-color: #4ecdc4;">
+      <div class="name">🍷 Vinohrady district</div>
+      <div class="desc">Walk around Jiřího z Poděbrad square — tons of great restaurants, wine bars, and craft beer spots. Best food neighborhood.</div>
+    </div>
+    <div class="food" style="border-left-color: #4ecdc4;">
+      <div class="name">🎸 Žižkov district</div>
+      <div class="desc">Highest bar density in Prague. Alternative vibes, cheap beers, authentic pubs. Great for a bar crawl.</div>
+    </div>
+    <div class="food" style="border-left-color: #4ecdc4;">
+      <div class="name">🌊 Náplavka food boats</div>
+      <div class="desc">Food boats along the river near your hotel. Weekend market with local food, craft drinks.</div>
+    </div>
+  </div>
 </div>
 
-<!-- TAB: By Day -->
-<div class="tab-content active" id="tab-days">
-
-<!-- Overview -->
-<div class="overview">
-<div class="oc"><div class="e">📅</div><div class="v">4 Nights</div><div class="l">Thu–Mon</div></div>
-<div class="oc"><div class="e">🏨</div><div class="v">2 Hotels</div><div class="l">Prague + Mezní Louka</div></div>
-<div class="oc"><div class="e">🌡️</div><div class="v">8–14°C</div><div class="l">Cloudy, some sun</div></div>
-<div class="oc"><div class="e">🎒</div><div class="v">Backpacks</div><div class="l">Light packing</div></div>
+<!-- ===== HIKING ===== -->
+<div class="section" id="hiking">
+  <div class="section-title">🥾 Bohemian Switzerland — Hiking</div>
+  
+  <p style="color:#aaa; margin-bottom: 16px;">Base: Hotel Mezní Louka, right in the heart of the national park.</p>
+  
+  <div class="hike">
+    <div class="name">⭐ Pravčická Gate (Prebischtor)</div>
+    <div class="stats">📏 ~6 km roundtrip • ⏱ 2-3h • 🏔️ Europe's largest natural sandstone arch!</div>
+    <div class="desc">From Mezní Louka, take Gabriela's Trail (~3 km) directly to the gate. THE highlight of the region. Go early morning for fewer crowds and best light.</div>
+  </div>
+  
+  <div class="hike">
+    <div class="name">🛶 Edmund Gorge (Wild Gorge)</div>
+    <div class="stats">📏 ~4 km one way from Hřensko • ⏱ 1-2h • Boat ride through narrow cliffs!</div>
+    <div class="desc">Spectacular gondola ride through towering sandstone walls. Combine: Prebischtor morning → Gorge afternoon. The combo is the classic day trip.</div>
+  </div>
+  
+  <div class="hike">
+    <div class="name">🌲 Jetřichovice Viewpoints</div>
+    <div class="stats">📏 ~8 km loop • ⏱ 3-4h • Less touristy, stunning formations</div>
+    <div class="desc">Mariina Viewpoint, Vilemínina Stěna — beautiful rock pillars and forest trails. Hřebenovka trail is the scenic route. Quieter than the gorge circuit.</div>
+  </div>
+  
+  <div class="tip-box">
+    <div class="label">🌡️ Weather Note</div>
+    <p style="margin-top:6px;">Early April: expect 5–12°C. Bring layers + waterproof jacket. Trails can be muddy. Sturdy shoes essential!</p>
+  </div>
 </div>
 
-<h3 class="stitle">🔗 Quick Links</h3>
-<div class="links-grid">
-<a class="link-btn" href="https://maps.google.com/?q=Mama+Shelter+Prague" target="_blank">📍 Mama Shelter</a>
-<a class="link-btn" href="https://maps.google.com/?q=Mezní+Louka+Bohemian+Switzerland" target="_blank">📍 Hotel Mezní Louka</a>
-<a class="link-btn" href="https://idos.idnes.cz/en/vlaky" target="_blank">🚆 Train Timetable</a>
-<a class="link-btn" href="https://mamashelter.com/prague/" target="_blank">🏨 Mama Shelter</a>
+<!-- ===== CHECKLIST ===== -->
+<div class="section" id="checklist">
+  <div class="section-title">✅ Trip Checklist</div>
+  
+  <h3 style="color:#4ecdc4; margin-bottom: 10px;">🧳 Packing</h3>
+  <ul class="checklist" id="pack-list">
+    <li onclick="toggle(this)"><div class="check"></div><span>Passport / ID card</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Phone charger + power bank</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Hiking shoes (sturdy, waterproof)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Rain jacket / layers (5-12°C in April)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Comfortable city walking shoes</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Czech Koruna (CZK) cash — some for small purchases</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Train tickets (Berlin→Prague, Prague→Děčín, Děčín→Berlin)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Hotel confirmations (Mama Shelter + Mezní Louka)</span></li>
+  </ul>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 10px;">📸 Photo Spots — Don't Forget!</h3>
+  <ul class="checklist" id="photo-list">
+    <li onclick="toggle(this)"><div class="check"></div><span>Charles Bridge at sunrise/sunset</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Letná Park panorama (bridges + castle)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Vyšehrad view of the river</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Astronomical Clock striking the hour</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Pravčická Gate (Bohemian Switzerland)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Edmund Gorge boat ride</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Žižkov TV Tower with babies</span></li>
+  </ul>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 10px;">🎯 Experiences</h3>
+  <ul class="checklist" id="exp-list">
+    <li onclick="toggle(this)"><div class="check"></div><span>Drink tankové pivo (tank beer) at Lokál</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Try svíčková (national dish)</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Beer at Letná Beer Garden with the view</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Walk Charles Bridge early morning</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Bar crawl in Žižkov</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Hike to Pravčická Gate</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Boat ride Edmund Gorge</span></li>
+    <li onclick="toggle(this)"><div class="check"></div><span>Try smažený sýr (fried cheese)</span></li>
+  </ul>
 </div>
 
-<div class="alg">
-<h4>🚨 Cedric's Allergies — Always ask when ordering!</h4>
-<p><b>Life-threatening:</b> Eggs, Nuts (EXCEPT peanuts & almonds OK)<br>
-<b>Throat + breathing:</b> Poultry, Avocado, Kiwi, Eggplant, Banana, Milk<br>
-<b>Czech:</b> "Bez vajec" = no eggs · "Mám alergii na vejce a ořechy" = I'm allergic to eggs and nuts</p>
+<!-- ===== CZECH PHRASES ===== -->
+<div class="section" id="czech">
+  <div class="section-title">🗣️ Essential Czech Phrases</div>
+  <p style="color:#aaa; margin-bottom: 16px;">Tap 🔊 to hear pronunciation. Czechs really appreciate when tourists try!</p>
+  
+  <h3 style="color:#4ecdc4; margin-bottom: 10px;">👋 Basics</h3>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Dobrý den</div>
+      <div class="phonetic">DOB-ree den</div>
+      <div class="english">Hello (formal)</div>
+    </div>
+    <button class="play-btn" onclick="speak('Dobrý den','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Ahoj</div>
+      <div class="phonetic">AH-hoy</div>
+      <div class="english">Hi / Bye (informal — like "ciao")</div>
+    </div>
+    <button class="play-btn" onclick="speak('Ahoj','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Děkuji / Díky</div>
+      <div class="phonetic">DYEH-koo-yee / DEE-kee</div>
+      <div class="english">Thank you / Thanks (casual)</div>
+    </div>
+    <button class="play-btn" onclick="speak('Děkuji','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Prosím</div>
+      <div class="phonetic">PRO-seem</div>
+      <div class="english">Please / You're welcome</div>
+    </div>
+    <button class="play-btn" onclick="speak('Prosím','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Promiňte</div>
+      <div class="phonetic">PRO-min-teh</div>
+      <div class="english">Excuse me / Sorry</div>
+    </div>
+    <button class="play-btn" onclick="speak('Promiňte','cs')">🔊</button>
+  </div>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 10px;">🍺 At the Restaurant / Bar</h3>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Jedno pivo, prosím</div>
+      <div class="phonetic">YED-no PI-vo, PRO-seem</div>
+      <div class="english">One beer, please</div>
+    </div>
+    <button class="play-btn" onclick="speak('Jedno pivo, prosím','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Dvě piva, prosím</div>
+      <div class="phonetic">DVYEH PI-va, PRO-seem</div>
+      <div class="english">Two beers, please</div>
+    </div>
+    <button class="play-btn" onclick="speak('Dvě piva, prosím','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Účet, prosím</div>
+      <div class="phonetic">OO-chet, PRO-seem</div>
+      <div class="english">The bill, please</div>
+    </div>
+    <button class="play-btn" onclick="speak('Účet, prosím','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Na zdraví!</div>
+      <div class="phonetic">NAH ZDRA-vee</div>
+      <div class="english">Cheers! (when clinking glasses)</div>
+    </div>
+    <button class="play-btn" onclick="speak('Na zdraví!','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Dobrou chuť</div>
+      <div class="phonetic">DOB-roh KHOOT</div>
+      <div class="english">Bon appétit!</div>
+    </div>
+    <button class="play-btn" onclick="speak('Dobrou chuť','cs')">🔊</button>
+  </div>
+  
+  <h3 style="color:#4ecdc4; margin: 16px 0 10px;">🗺️ Getting Around</h3>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Kde je...?</div>
+      <div class="phonetic">GDEH yeh...?</div>
+      <div class="english">Where is...?</div>
+    </div>
+    <button class="play-btn" onclick="speak('Kde je?','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Kolik to stojí?</div>
+      <div class="phonetic">KO-lik toh STO-yee?</div>
+      <div class="english">How much does it cost?</div>
+    </div>
+    <button class="play-btn" onclick="speak('Kolik to stojí?','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Mluvíte anglicky?</div>
+      <div class="phonetic">MLOO-vee-teh AN-glits-kee?</div>
+      <div class="english">Do you speak English?</div>
+    </div>
+    <button class="play-btn" onclick="speak('Mluvíte anglicky?','cs')">🔊</button>
+  </div>
+  
+  <div class="phrase">
+    <div class="text">
+      <div class="czech">Nerozumím</div>
+      <div class="phonetic">NEH-roh-zoo-meem</div>
+      <div class="english">I don't understand</div>
+    </div>
+    <button class="play-btn" onclick="speak('Nerozumím','cs')">🔊</button>
+  </div>
+  
+  <div class="tip-box">
+    <div class="label">💡 Pronunciation Tips</div>
+    <p style="margin-top:6px;">
+      • <strong>č</strong> = "ch" as in "church"<br>
+      • <strong>š</strong> = "sh" as in "shoe"<br>
+      • <strong>ž</strong> = "zh" as in "measure"<br>
+      • <strong>ř</strong> = uniquely Czech! Like "rž" — rolled R + zh combined<br>
+      • <strong>ě</strong> = "yeh"<br>
+      • Stress is ALWAYS on the first syllable!
+    </p>
+  </div>
 </div>
 
-<!-- THU -->
-<div class="day"><div class="day-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-<h2>🚄 Thu Apr 2 — Arrival</h2><div class="w">☁️ ~8°C</div></div>
-<div class="day-body">
-<div class="tl">
-<div class="te tr"><div class="t">17:28–21:25</div><div class="n">🚄 Train Berlin → Praha</div><div class="d">~4h ride. Snacks or train dining.</div></div>
-<div class="te ht"><div class="t">~21:45</div><div class="n">🏨 Check-in Mama Shelter</div><div class="d">Holešovice (Prague 7). Tram 12/17 or Bolt (~€6).</div></div>
-<div class="te fd"><div class="t">~22:00</div><div class="n">🍽️ Late Dinner</div><div class="d">Hotel restaurant (until 23:30) or Holešovice spots.</div></div>
+<!-- ===== PRACTICAL ===== -->
+<div class="section" id="practical">
+  <div class="section-title">💡 Practical Info</div>
+  
+  <h3 style="color:#4ecdc4;">🚇 Getting Around Prague</h3>
+  <ul>
+    <li><strong>Metro + Tram</strong> — Excellent network. Ticket via PID Lítačka app or machines at stations</li>
+    <li><strong>30-min ticket:</strong> 30 CZK (~€1.20) • <strong>24h ticket:</strong> 120 CZK (~€4.80)</li>
+    <li><strong>From main station → Mama Shelter:</strong> Metro C (red) → Smíchovské nádraží, or tram</li>
+    <li><strong>Walking:</strong> Central Prague is very walkable — most sights within 30 min of each other</li>
+  </ul>
+
+  <h3 style="color:#4ecdc4; margin-top: 16px;">💰 Money & Prices</h3>
+  <ul>
+    <li><strong>Currency:</strong> Czech Koruna (CZK) — €1 ≈ 25 CZK</li>
+    <li><strong>Cards:</strong> Accepted almost everywhere. Still bring some cash for small shops/markets</li>
+    <li><strong>Beer:</strong> 50–70 CZK (€2–3) 🍺 • <strong>Meal:</strong> 200–400 CZK (€8–16)</li>
+  </ul>
+  
+  <div class="warn-box">
+    <div class="label">⚠️ Exchange Office Scam</div>
+    <p style="margin-top:6px;">"0% Commission" does NOT mean good rate! Always use a <strong>bank ATM</strong> with your own card. When the ATM asks "convert to EUR?" → always choose <strong>NO</strong> (pay in CZK). Exchange offices near tourist spots are notorious rip-offs.</p>
+  </div>
+
+  <h3 style="color:#4ecdc4; margin-top: 16px;">📞 Important Contacts</h3>
+  <ul>
+    <li><strong>Mama Shelter:</strong> +420 225 117 111</li>
+    <li><strong>Emergency:</strong> 112 (EU-wide) • Police: 158 • Ambulance: 155</li>
+  </ul>
 </div>
-<h4 class="sub-heading">🍽️ Thursday Options:</h4>
-<div id="items-thu"></div>
-</div></div>
 
-<!-- FRI -->
-<div class="day"><div class="day-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-<h2>🏙️ Fri Apr 3 — Explore Prague</h2><div class="w">⛅ ~11°C</div></div>
-<div class="day-body">
-<div class="tl">
-<div class="te ht"><div class="t">08:00–09:30</div><div class="n">🥐 Breakfast at hotel</div><div class="d">Included. Start easy!</div></div>
-<div class="te ex"><div class="t">10:00–12:30</div><div class="n">🏘️ Morning: Neighborhood hopping</div><div class="d">Start in Holešovice → Letná Park.</div></div>
-<div class="te fd"><div class="t">12:30–14:00</div><div class="n">🍲 Bohemian Goulash Lunch</div><div class="d">Must-do — goulash in a bread bowl.</div></div>
-<div class="te ex"><div class="t">14:00–17:30</div><div class="n">🌇 Afternoon: Different neighborhoods</div><div class="d">Vinohrady, Žižkov, Malá Strana.</div></div>
-<div class="te fd"><div class="t">19:00–21:00</div><div class="n">🍽️ Dinner</div><div class="d">Evening in a new part of town.</div></div>
-<div class="te ex"><div class="t">21:00+</div><div class="n">🍻 Bars or chill</div><div class="d">Holešovice/Žižkov best bars.</div></div>
+<div class="footer">
+  🎩 Built by Gaston • April 2, 2026<br>
+  Have an amazing trip! 🇨🇿🍺🥾
 </div>
-<h4 class="sub-heading">📍 Spots & 🍽️ Restaurants:</h4>
-<div id="items-fri"></div>
 
-<div class="item info-item" style="border-left-color:var(--blue)">
-<span class="tg exp">Info</span>
-<h4>Getting Around Prague</h4>
-<p>⚠️ <b>E-scooters BANNED since Jan 2026!</b><br>
-🚊 <b>Tram</b> — excellent network. 24h ticket: 120 CZK (~€5).<br>
-🚕 <b>Bolt</b> — works for taxi rides.<br>
-🚶 <b>Walking</b> — Prague is very walkable.<br>
-📱 Install <b>PID Lítačka</b> app for tickets.</p>
-</div>
-</div></div>
-
-<!-- SAT -->
-<div class="day"><div class="day-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-<h2>🚄 Sat Apr 4 — Prague → Děčín</h2><div class="w">⛅ ~12°C</div></div>
-<div class="day-body">
-<div class="tl">
-<div class="te ht"><div class="t">08:00–09:30</div><div class="n">🥐 Breakfast + Check-out</div><div class="d">Pack up, backpacks on!</div></div>
-<div class="te ex"><div class="t">10:00–15:00</div><div class="n">🏙️ Last morning in Prague</div><div class="d">Whatever you missed yesterday.</div></div>
-</div>
-<h4 class="sub-heading">📍 Saturday Options:</h4>
-<div id="items-sat"></div>
-<div class="tl" style="margin-top:20px">
-<div class="te tr"><div class="t">16:31–17:58</div><div class="n">🚄 Train Prague → Děčín</div><div class="d">~1.5h along the Elbe. Beautiful!</div></div>
-<div class="te tr"><div class="t">~18:15</div><div class="n">🚌 Bus Děčín → Mezní Louka</div><div class="d">⚠️ Check idos.cz! Or taxi ~€25.</div></div>
-<div class="te ht"><div class="t">~19:00</div><div class="n">🏨 Hotel Mezní Louka</div><div class="d">Inside Bohemian Switzerland NP. Finnish sauna available! 🧖</div></div>
-<div class="te fd"><div class="t">~19:30</div><div class="n">🍽️ Dinner</div><div class="d">Hotel restaurant or Hřensko (15min).</div></div>
-</div>
-</div></div>
-
-<!-- SUN -->
-<div class="day"><div class="day-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-<h2>🥾 Sun Apr 5 — Hiking Day</h2><div class="w">🌤️ ~14°C perfect!</div></div>
-<div class="day-body">
-<div class="tl">
-<div class="te ht"><div class="t">07:30–08:30</div><div class="n">🥐 Breakfast</div><div class="d">Early start! Pack water + snacks.</div></div>
-<div class="te ex"><div class="t">09:00–16:00</div><div class="n">🥾 The Big Loop</div><div class="d">Mezní Louka → Pravčická Brána → Edmund Gorge → boat → back. ~5-6h.</div></div>
-<div class="te fd"><div class="t">~17:00</div><div class="n">🍽️ Dinner in Hřensko</div><div class="d">Well-deserved after the hike!</div></div>
-</div>
-<h4 class="sub-heading">🥾 Hiking Highlights:</h4>
-<div id="items-sun"></div>
-</div></div>
-
-<!-- MON -->
-<div class="day"><div class="day-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-<h2>🚆 Mon Apr 6 — Return to Berlin</h2><div class="w">⛅ ~12°C</div></div>
-<div class="day-body">
-<div class="tl">
-<div class="te ht"><div class="t">08:00–09:30</div><div class="n">🥐 Breakfast + Check-out</div><div class="d">Last morning! Relax, pack.</div></div>
-<div class="te ex"><div class="t">10:00–12:30</div><div class="n">🚶 Morning walk or explore</div><div class="d">Short hike or head to Děčín.</div></div>
-</div>
-<div id="items-mon"></div>
-<div class="tl" style="margin-top:20px">
-<div class="te tr"><div class="t">~12:30</div><div class="n">🚌 Bus → Děčín</div><div class="d">In time for the train!</div></div>
-<div class="te tr"><div class="t">14:02–16:28</div><div class="n">🚆 Train Děčín → Berlin</div><div class="d">~2.5h along the Elbe.</div></div>
-<div class="te ht"><div class="t">~17:00</div><div class="n">🏠 Home in Berlin! 🎉</div><div class="d"></div></div>
-</div>
-</div></div>
-
-</div><!-- end tab-days -->
-
-<!-- TAB: By District -->
-<div class="tab-content" id="tab-districts"></div>
-
-<!-- ========== PACKING + TODOs + PHRASES ========== -->
-<h3 class="stitle">🎒 Packing List</h3>
-<div style="background:var(--card);border-radius:12px;padding:20px">
-<ul class="cl" id="packList">
-<li><input type="checkbox" onchange="chk(this)"><span>Backpack (2 — one per person)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>4x change of clothes (layers!)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>1x jeans + 1x comfy hiking pants</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>New Balance or sneakers (hike-ready)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Rain jacket / windbreaker</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Fleece or hoodie (cold evenings!)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Charger + power bank</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Passport / ID</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Toothbrush + basics</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Snacks for the train</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Water bottle (refillable)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>Sunscreen (April sun!)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>NO LAPTOP! 🚫</span></li>
-</ul></div>
-
-<h3 class="stitle">❓ Open TODOs</h3>
-<div style="background:var(--card);border-radius:12px;padding:20px">
-<ul class="cl" id="todoList">
-<li><input type="checkbox" onchange="chk(this)"><span>🚌 Bus Děčín ↔ Mezní Louka: check Apr 4 + 6</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>🚣 Edmund Gorge boats: confirm open Apr 5</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>🚊 Install PID Lítačka app</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>🍽️ Reserve Výtopna? (train restaurant)</span></li>
-<li><input type="checkbox" onchange="chk(this)"><span>🌤️ Check weather 1 day before</span></li>
-</ul></div>
-
-<h3 class="stitle">🇨🇿 Useful Czech Phrases</h3>
-<div style="background:var(--card);border-radius:12px;padding:20px">
-<table style="width:100%;border-collapse:collapse">
-<tr><td style="padding:6px 0;color:var(--amber);width:55%">Děkuji</td><td>Thank you</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Prosím</td><td>Please</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Dobrý den</td><td>Hello</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Pivo, prosím</td><td>A beer, please</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Kolik to stojí?</td><td>How much?</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Mám alergii na vejce a ořechy</td><td>Allergic to eggs & nuts</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Bez vajec / Bez ořechů</td><td>No eggs / No nuts</td></tr>
-<tr><td style="padding:6px 0;color:var(--amber)">Účet, prosím</td><td>Check, please</td></tr>
-</table></div>
-
-<div class="notes"><h3>📝 Notes & Feedback</h3>
-<textarea id="userNotes" placeholder="Write notes here..."></textarea></div>
-
-<div style="text-align:center;color:var(--muted);padding:20px;font-size:.85em">
-Built with 🎩 by Gaston · v3 · April 1, 2026<br>
-<button onclick="if(confirm('Reset everything?')){localStorage.removeItem(SK);location.reload()}" style="margin-top:10px;background:#333;border:1px solid #555;color:var(--muted);padding:6px 16px;border-radius:6px;cursor:pointer;font-size:.85em">Reset all</button>
-</div>
 </div>
 
 <script>
-const SK='prague-trip-v3';
-const DAYS={thu:'Thu · Arrival',fri:'Fri · Prague',sat:'Sat · Prague→Děčín',sun:'Sun · Hiking',mon:'Mon · Return'};
-const DAY_ORDER=['thu','fri','sat','sun','mon'];
-const DISTRICTS={holesovice:'Holešovice (Prague 7) — Hotel Area',malastrana:'Malá Strana',staremesto:'Staré Město (Old Town)',novemesto:'Nové Město (New Town)',vinohrady:'Vinohrady',zizkov:'Žižkov',karlin:'Karlín',vysehrad:'Vyšehrad',bohswitz:'Bohemian Switzerland'};
+// Checklist toggle
+function toggle(el) {
+  el.classList.toggle('done');
+  saveChecklist();
+}
 
-const ITEMS=[
-{id:'mama-resto',name:'Mama Shelter Restaurant',district:'holesovice',cat:'food',tag:'Restaurant',tagCls:'food',desc:'International menu, cocktails. Open until 23:30. Easiest after arrival.',type:'IN-HOTEL',links:[],lat:50.1015,lng:14.432,defaultDay:'thu'},
-{id:'bar-cobra',name:'Bar Cobra',district:'holesovice',cat:'food',tag:'Cocktail Bar',tagCls:'bar',desc:'Moody lighting, rotating cocktails. Pure Holešovice vibe.',type:'5 MIN WALK',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Bar+Cobra+Prague+Holesovice'}],lat:50.1005,lng:14.4335,defaultDay:'thu'},
-{id:'holesovice-letna',name:'Holešovice & Letná Park',district:'holesovice',cat:'spot',tag:'Morning',tagCls:'',desc:'Your hotel hood! Hipster hub, DOX Centre, Letná Park panorama + Metronome. Letná Beer Garden for morning beers with a view.',type:'',links:[{l:'📍 Letná',u:'https://maps.google.com/?q=Letná+Park+Prague'},{l:'📍 DOX',u:'https://maps.google.com/?q=DOX+Centre+Prague'}],lat:50.0965,lng:14.421,defaultDay:'fri'},
-{id:'vinohrady',name:'Vinohrady',district:'vinohrady',cat:'spot',tag:'Afternoon',tagCls:'',desc:'TimeOut\'s "32nd coolest neighborhood". Art Nouveau, tree-lined streets, amazing cafés. Start at Náměstí Míru. Zero tourists.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Vinohrady+Prague'}],lat:50.075,lng:14.445,defaultDay:'fri'},
-{id:'zizkov',name:'Žižkov',district:'zizkov',cat:'spot',tag:'Afternoon / Evening',tagCls:'',desc:'Prague\'s "rebel quarter" — most bars per capita. Žižkov TV Tower with crawling babies (David Černý). Raw, authentic, zero tourists.',type:'',links:[{l:'📍 TV Tower',u:'https://maps.google.com/?q=Žižkov+Television+Tower'}],lat:50.083,lng:14.45,defaultDay:'fri'},
-{id:'certovka',name:'Čertovka & Kampa Island',district:'malastrana',cat:'spot',tag:'Must-See',tagCls:'must',desc:'Hidden "little Venice" — romantic alley, old mill wheels, Kampa Island. Magical in the afternoon. Near Charles Bridge but another world.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Čertovka+Prague'}],lat:50.086,lng:14.407,defaultDay:'fri'},
-{id:'waldstein',name:'Wallenstein Garden',district:'malastrana',cat:'spot',tag:'Garden',tagCls:'gem',desc:'Baroque garden near Prague Castle. Free entry! Peacocks + surreal Grotta. Open Apr–Oct.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Waldstein+Garden+Prague'}],lat:50.09,lng:14.405,defaultDay:'fri'},
-{id:'vrtba',name:'Vrtba Garden',district:'malastrana',cat:'spot',tag:'Garden',tagCls:'gem',desc:'UNESCO baroque terrace garden. Small fee. Views over Malá Strana rooftops.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Vrtba+Garden+Prague'}],lat:50.0865,lng:14.4035,defaultDay:'fri'},
-{id:'synagogue',name:'Jubilee Synagogue',district:'novemesto',cat:'spot',tag:'Hidden Gem',tagCls:'gem',desc:'Stunning Art Nouveau + Moorish elements. One of Prague\'s most colorful buildings. Near Wenceslas Square.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Jubilee+Synagogue+Prague'}],lat:50.0805,lng:14.4315,defaultDay:'fri'},
-{id:'owl-aviary',name:'The Owl Aviary',district:'malastrana',cat:'spot',tag:'Hidden Gem',tagCls:'gem',desc:'Hidden owl enclosure near Wallenstein Garden. Quirky detail most miss.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Waldstein+Garden+Prague'}],lat:50.0905,lng:14.4055,defaultDay:'fri'},
-{id:'slovansky',name:'Slovanský Island — Pedal Boats 🚣',district:'novemesto',cat:'experience',tag:'Experience',tagCls:'exp',desc:'Pedal boats on the Vltava with old town views. Chill, romantic. Rental on the island.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Slovanský+ostrov+Prague'}],lat:50.078,lng:14.413,defaultDay:'fri'},
-{id:'senovazne',name:'Senovážné Náměstí',district:'novemesto',cat:'spot',tag:'Local Gem',tagCls:'gem',desc:'Quiet square with nice cafés. Locals\' pick for chilling. Most visitors walk right past.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Senovážné+náměstí+Prague'}],lat:50.083,lng:14.433,defaultDay:'fri'},
-{id:'tram22',name:'Tram 22 — Scenic Ride 🚊',district:'novemesto',cat:'experience',tag:'Experience',tagCls:'exp',desc:'Most scenic tram line! Past the castle, through beautiful neighborhoods. Free sightseeing on public transport.',type:'',links:[],lat:50.088,lng:14.42,defaultDay:'fri'},
-{id:'stromovka',name:'Stromovka Park 🌳',district:'holesovice',cat:'spot',tag:'Local Gem',tagCls:'gem',desc:'Prague\'s largest park — like Tiergarten. Right near your hotel! Great for morning walks.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Stromovka+Prague'}],lat:50.106,lng:14.418,defaultDay:'fri'},
-{id:'karlin',name:'Karlín',district:'karlin',cat:'spot',tag:'Optional',tagCls:'',desc:'Post-flood renaissance. Modern, young, great restaurants. Less walking vibe but gastronomically top.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Karlín+Prague'}],lat:50.092,lng:14.453,defaultDay:'fri'},
-{id:'u-kroka',name:'U Kroka 🥇',district:'vysehrad',cat:'food',tag:'Czech Traditional',tagCls:'food',desc:'Reddit\'s top goulash pick. Pricier but outstanding. Next to Vyšehrad fortress.',type:'Vyšehrad area',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=U+Kroka+Prague'}],lat:50.064,lng:14.421,defaultDay:'fri'},
-{id:'cerveny-pav',name:'U Červeného Páva',district:'malastrana',cat:'food',tag:'Czech Traditional',tagCls:'food',desc:'"Best goulash in bread" — spongy bread bowl + dumplings. Historic Malá Strana location.',type:'Malá Strana',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=U+Červeného+Páva+Prague'}],lat:50.087,lng:14.405,defaultDay:'fri'},
-{id:'vytopna',name:'Výtopna Railway Restaurant 🚂',district:'novemesto',cat:'food',tag:'Experience',tagCls:'exp',desc:'Food delivered by model trains! 900m tracks, 35 trains, 5 drawbridges. Chris\' recommendation.',type:'Wenceslas Square',links:[{l:'🌐 Web',u:'https://www.vytopna.cz/en/branch/prague-wenceslas-square'},{l:'📍 Maps',u:'https://maps.google.com/?q=Výtopna+Railway+Restaurant+Prague'}],lat:50.0815,lng:14.425,defaultDay:'fri'},
-{id:'okonomiyaki',name:'Okonomiyaki Izakaya',district:'holesovice',cat:'food',tag:'Japanese',tagCls:'food',desc:'Osaka-style okonomiyaki, gyoza, udon. 2025 newcomer. Right in your hood!',type:'Letná (near hotel!)',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Okonomiyaki+Izakaya+Prague+Letna'}],lat:50.0985,lng:14.427,defaultDay:'fri'},
-{id:'lokal',name:'Lokál 🍺',district:'staremesto',cat:'food',tag:'Czech Traditional',tagCls:'food',desc:'Quality Czech food + perfectly tapped Pilsner. Multiple locations. Goulash, schnitzel, svíčková. Locals love it.',type:'Chain — multiple locations',links:[{l:'📍 Maps',u:'https://maps.app.goo.gl/22AGrPMDix9sQB3QA'},{l:'🌐 Web',u:'https://lokal-dlouha.ambi.cz/en/'}],lat:50.09,lng:14.424,defaultDay:'fri'},
-{id:'bistro-monk',name:'Bistro Monk',district:'novemesto',cat:'food',tag:'Modern Czech',tagCls:'food',desc:'Modern bistro with great vibes. Recommended in video.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Bistro+Monk+Prague'}],lat:50.08,lng:14.435,defaultDay:'fri'},
-{id:'cafe-letka',name:'Café Letka ☕',district:'holesovice',cat:'food',tag:'Café',tagCls:'food',desc:'Beloved Letná café. Perfect morning coffee. Right in your hood!',type:'Near hotel!',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Cafe+Letka+Prague'}],lat:50.099,lng:14.424,defaultDay:'fri'},
-{id:'kolacherie',name:'Kolacherie 🥐',district:'staremesto',cat:'food',tag:'Pastries',tagCls:'food',desc:'Traditional Bohemian koláče — round yeast cakes with quark/poppy/plum. Authentic snack on the go!',type:'Czech Koláče',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Kolacherie+Prague'}],lat:50.087,lng:14.418,defaultDay:'fri'},
-{id:'katr-pub',name:'KATR Pub 🍺',district:'vinohrady',cat:'food',tag:'Local Pub',tagCls:'food',desc:'Where Prague locals actually hang out. No tourists, good beer, real vibes.',type:'Recommended by locals',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=KATR+pub+Prague'}],lat:50.078,lng:14.44,defaultDay:'fri'},
-{id:'food-lab',name:'Food Lab',district:'novemesto',cat:'food',tag:'Modern Food',tagCls:'food',desc:'Creative dishes, good atmosphere. Local recommendation.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Food+Lab+Prague'}],lat:50.085,lng:14.438,defaultDay:'fri'},
-{id:'no-stress-bakery',name:'No Stress Bakery 🥐',district:'staremesto',cat:'food',tag:'Bakery',tagCls:'food',desc:'Chill bakery loved by locals. Great pastries, no rush. Perfect quick breakfast.',type:'Local favorite',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=No+Stress+Bakery+Prague'}],lat:50.091,lng:14.431,defaultDay:'fri'},
-{id:'matilda',name:'Matilda',district:'vinohrady',cat:'food',tag:'Restaurant',tagCls:'food',desc:'Hidden gem restaurant recommended by Prague locals.',type:'Local recommendation',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Matilda+restaurant+Prague'}],lat:50.076,lng:14.436,defaultDay:'fri'},
-{id:'luft-bar',name:'Luft Bar 🌆',district:'staremesto',cat:'experience',tag:'Rooftop Bar',tagCls:'bar',desc:'Great views. Perfect for sunset or evening drinks.',type:'Local recommendation',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Luft+bar+Prague'}],lat:50.0885,lng:14.4185,defaultDay:'fri'},
-{id:'anonymous-bar',name:'Anonymous Bar 🎭',district:'staremesto',cat:'experience',tag:'Cocktail Bar',tagCls:'bar',desc:'Guy Fawkes themed cocktail bar. Cool drinks, unique atmosphere.',type:'Unique experience',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Anonymous+Bar+Prague'}],lat:50.087,lng:14.422,defaultDay:'fri'},
-{id:'vysehrad',name:'Vyšehrad Fortress',district:'vysehrad',cat:'spot',tag:'Recommended',tagCls:'must',desc:'Historic fortress, amazing Vltava panorama. Way fewer tourists than Prague Castle. Lunch at U Kroka next door.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Vyšehrad+Prague'}],lat:50.063,lng:14.418,defaultDay:'sat'},
-{id:'naplavka-market',name:'Farmers Market at Náplavka 🛒',district:'novemesto',cat:'experience',tag:'Saturday Special!',tagCls:'exp',desc:'Saturday farmers market on the riverfront! Local food, crafts. Under a bridge. Perfect last morning in Prague!',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Náplavka+Farmers+Market+Prague'}],lat:50.073,lng:14.415,defaultDay:'sat'},
-{id:'pravcicka',name:'Pravčická Brána',district:'bohswitz',cat:'experience',tag:'Must-Do',tagCls:'must',desc:'Europe\'s largest natural sandstone arch. Entry ~€3. ~1.5h hike from Mezní Louka.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Pravčická+Brána'}],lat:50.8835,lng:14.282,defaultDay:'sun'},
-{id:'edmund-gorge',name:'Edmund Gorge Boat Ride 🚣',district:'bohswitz',cat:'experience',tag:'Must-Do',tagCls:'must',desc:'Punted through narrow gorges on wooden boats. ~€8 for both gorges. Opens in April!',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Edmundova+soutěska'}],lat:50.868,lng:14.29,defaultDay:'sun'},
-{id:'decin-castle',name:'Děčín Castle',district:'bohswitz',cat:'spot',tag:'Optional',tagCls:'',desc:'Right above the train station. Gardens + Elbe views. Perfect 1-2h before the train.',type:'',links:[{l:'📍 Maps',u:'https://maps.google.com/?q=Děčín+Castle'}],lat:50.78,lng:14.212,defaultDay:'mon'}
-];
+// Persist checklist state
+function saveChecklist() {
+  const state = {};
+  document.querySelectorAll('.checklist li').forEach((li, i) => {
+    state[i] = li.classList.contains('done');
+  });
+  localStorage.setItem('prague-checklist', JSON.stringify(state));
+}
+function loadChecklist() {
+  try {
+    const state = JSON.parse(localStorage.getItem('prague-checklist') || '{}');
+    document.querySelectorAll('.checklist li').forEach((li, i) => {
+      if (state[i]) li.classList.add('done');
+    });
+  } catch(e) {}
+}
+loadChecklist();
 
-// State
-function getS(){try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}}}
-function setS(s){localStorage.setItem(SK,JSON.stringify(s))}
-function migrate(){
-  const old=localStorage.getItem('prague-trip-2026-v2');
-  if(old&&!localStorage.getItem(SK)){
-    try{const o=JSON.parse(old);const n={items:{},dayAssign:{},packList:o.packingList,todoList:o.todoList,notes:o.notes};
-    if(o.items)Object.keys(o.items).forEach(k=>{if(o.items[k])n.items[k]=true});
-    setS(n)}catch(e){}
+// Text-to-speech for Czech phrases
+function speak(text, lang) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || 'cs-CZ';
+    u.rate = 0.8;
+    // Try to find Czech voice
+    const voices = window.speechSynthesis.getVoices();
+    const czVoice = voices.find(v => v.lang.startsWith('cs'));
+    if (czVoice) u.voice = czVoice;
+    window.speechSynthesis.speak(u);
   }
 }
-
-// Render items
-function renderItem(item,container){
-  const s=getS();const sel=s.items&&s.items[item.id];const assignedDay=s.dayAssign&&s.dayAssign[item.id];
-  const el=document.createElement('div');el.className='item'+(sel?' sel':'');el.dataset.id=item.id;el.dataset.cat=item.cat;
-  let linksHtml=item.links.map(l=>`<a href="${l.u}" target="_blank" onclick="event.stopPropagation()">${l.l}</a>`).join(' · ');
-  let dayBtns='';
-  if(sel){dayBtns='<div class="day-assign" onclick="event.stopPropagation()">'+DAY_ORDER.map(d=>
-    `<button class="da${assignedDay===d?' act':''}" onclick="assignDay('${item.id}','${d}',this)">${d.charAt(0).toUpperCase()+d.slice(1)}</button>`
-  ).join('')+'</div>';}
-  el.innerHTML=`<span class="tg ${item.tagCls}">${item.tag}</span>
-<h4>${item.name}</h4>
-${item.type?`<div class="tp">${item.type}</div>`:''}
-<p>${item.desc}</p>
-${linksHtml?`<div class="lnk">${linksHtml}</div>`:''}
-${dayBtns}`;
-  el.onclick=()=>{toggleSel(item.id);renderAll()};
-  container.appendChild(el);
-}
-
-function toggleSel(id){const s=getS();if(!s.items)s.items={};s.items[id]=!s.items[id];if(!s.items[id]){delete s.items[id];if(s.dayAssign)delete s.dayAssign[id]}setS(s)}
-function assignDay(id,day,btn){const s=getS();if(!s.dayAssign)s.dayAssign={};if(s.dayAssign[id]===day)delete s.dayAssign[id];else s.dayAssign[id]=day;setS(s);renderAll()}
-
-function renderAll(){
-  // Day view
-  ['thu','fri','sat','sun','mon'].forEach(d=>{
-    const c=document.getElementById('items-'+d);if(!c)return;c.innerHTML='';
-    ITEMS.filter(i=>i.defaultDay===d).forEach(i=>renderItem(i,c));
-  });
-  // District view
-  const dc=document.getElementById('tab-districts');dc.innerHTML='';
-  Object.keys(DISTRICTS).forEach(dk=>{
-    const items=ITEMS.filter(i=>i.district===dk);if(!items.length)return;
-    const sec=document.createElement('div');sec.className='district';
-    sec.innerHTML=`<h3>${DISTRICTS[dk]} (${items.length})</h3>`;
-    items.forEach(i=>renderItem(i,sec));
-    dc.appendChild(sec);
-  });
-  updateSummary();updateMap();applyFilter();
-}
-
-function updateSummary(){
-  const s=getS();const sel=ITEMS.filter(i=>s.items&&s.items[i.id]);
-  document.getElementById('selCount').textContent=sel.length;
-  const ul=document.getElementById('sumList');
-  if(!sel.length){ul.innerHTML='<li class="empty">Tap spots below to build your plan!</li>';return}
-  // Group by assigned day
-  const byDay={};sel.forEach(i=>{const d=(s.dayAssign&&s.dayAssign[i.id])||i.defaultDay;if(!byDay[d])byDay[d]=[];byDay[d].push(i)});
-  let html='';DAY_ORDER.forEach(d=>{if(!byDay[d])return;
-    html+=`<li class="day-label" style="list-style:none">${DAYS[d]}</li>`;
-    byDay[d].forEach(i=>{const ic=i.cat==='food'?'🍽️':i.cat==='experience'?'🎯':'📍';
-    html+=`<li style="list-style:none">${ic} ${i.name}</li>`});
-  });
-  ul.innerHTML=html;
+// Preload voices
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
 // Map
-let map,markers=[];
-function initMap(){
-  map=L.map('map',{scrollWheelZoom:false}).setView([50.0755,14.4378],13);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©OSM ©CARTO',maxZoom:19}).addTo(map);
-  updateMap();
-}
-function updateMap(){
-  if(!map)return;markers.forEach(m=>map.removeLayer(m));markers=[];
-  const s=getS();const pragueItems=ITEMS.filter(i=>i.district!=='bohswitz');
-  pragueItems.forEach(i=>{
-    const sel=s.items&&s.items[i.id];
-    const color=i.cat==='food'?(i.tagCls==='bar'?'#a855f7':'#fbbf24'):i.cat==='experience'?'#60a5fa':'#4ade80';
-    const size=sel?14:10;const border=sel?'3px solid #fff':'2px solid #333';
-    const icon=L.divIcon({className:'',html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:${border};box-shadow:0 0 6px rgba(0,0,0,.5)"></div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]});
-    const m=L.marker([i.lat,i.lng],{icon}).addTo(map);
-    const ic=i.cat==='food'?'🍽️':i.cat==='experience'?'🎯':'📍';
-    m.bindPopup(`<div style="min-width:180px"><b>${ic} ${i.name}</b><br><span style="color:#888;font-size:.85em">${i.desc.slice(0,100)}...</span><br><button onclick="toggleSel('${i.id}');renderAll()" style="margin-top:6px;padding:4px 12px;border-radius:4px;border:none;background:${sel?'#ef4444':'#4ade80'};color:#fff;cursor:pointer">${sel?'Remove':'Select'}</button></div>`,{className:'dark-popup'});
-    markers.push(m);
+const map = L.map('hero-map', { zoomControl: true, scrollWheelZoom: false }).setView([50.0800, 14.4200], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO', maxZoom: 19
+}).addTo(map);
+
+function ic(emoji) {
+  return L.divIcon({
+    html: `<div style="font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,0.7);">${emoji}</div>`,
+    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14], className: ''
   });
 }
 
-// Tabs
-function switchTab(tab,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-}
-
-// Filter
-let currentFilter='all';
-function filterCat(f,btn){
-  currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyFilter();
-}
-function applyFilter(){
-  const s=getS();
-  document.querySelectorAll('.item:not(.info-item)').forEach(el=>{
-    if(!el.dataset.id)return;
-    if(currentFilter==='all'){el.style.display='';return}
-    if(currentFilter==='selected'){el.style.display=el.classList.contains('sel')?'':'none';return}
-    el.style.display=el.dataset.cat===currentFilter?'':'none';
+function hotelIcon() {
+  return L.divIcon({
+    html: `<div style="font-size:28px;text-shadow:0 0 10px #e94560, 0 0 20px #e94560;animation:pulse 2s infinite;">🏨</div>`,
+    iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16], className: ''
   });
 }
 
-// Checklists
-function chk(cb){const sp=cb.nextElementSibling;if(cb.checked)sp.classList.add('done');else sp.classList.remove('done');saveChk()}
-function saveChk(){
-  const s=getS();
-  ['packList','todoList'].forEach(id=>{const items=document.getElementById(id)?.querySelectorAll('input[type=checkbox]');if(items)s[id]=Array.from(items).map(c=>c.checked)});
-  s.notes=document.getElementById('userNotes')?.value||'';setS(s);
-}
-function loadChk(){
-  const s=getS();
-  ['packList','todoList'].forEach(id=>{const items=document.getElementById(id)?.querySelectorAll('input[type=checkbox]');if(items&&s[id])s[id].forEach((c,i)=>{if(items[i]){items[i].checked=c;if(c)items[i].nextElementSibling.classList.add('done')}})});
-  if(s.notes)document.getElementById('userNotes').value=s.notes;
-}
+// Hotel (prominent!)
+L.marker([50.0706, 14.4030], { icon: hotelIcon() })
+  .bindPopup('<b>🏨 Mama Shelter Prague</b><br><span style="color:#aaa">Your hotel! Smíchov, Prague 5</span>')
+  .addTo(map).openPopup();
 
-// Dark popup style
-const style=document.createElement('style');
-style.textContent='.dark-popup .leaflet-popup-content-wrapper{background:#1a1a2e;color:#eee;border-radius:10px}.dark-popup .leaflet-popup-tip{background:#1a1a2e}';
+// Must-see
+const spots = [
+  [50.0870, 14.4206, '🕰️', 'Old Town Square', 'Astronomical Clock'],
+  [50.0865, 14.4114, '🌉', 'Charles Bridge', '14th century, 30 statues'],
+  [50.0911, 14.4016, '🏰', 'Prague Castle', "World's largest castle complex"],
+  [50.0660, 14.4186, '🏰', 'Vyšehrad', 'Hidden gem — epic views!'],
+  [50.0963, 14.4179, '🌿', 'Letná Park', 'Best panorama + beer garden'],
+  [50.0887, 14.4175, '✡️', 'Josefov', 'Jewish Quarter'],
+  [50.0756, 14.4413, '🍷', 'Vinohrady', 'Best food district'],
+  [50.0836, 14.4502, '🎸', 'Žižkov', 'Best bar district'],
+  [50.0900, 14.4245, '🍺', 'Lokál', 'Best tank beer in Prague'],
+  [50.0753, 14.4140, '🌊', 'Náplavka', 'Riverbank — near hotel!'],
+  [50.0990, 14.4352, '🏭', 'Holešovice', 'Arts & craft beer'],
+];
+spots.forEach(([lat,lng,em,name,desc]) => {
+  L.marker([lat,lng], {icon:ic(em)}).bindPopup(`<b>${em} ${name}</b><br><span style="color:#aaa">${desc}</span>`).addTo(map);
+});
+
+// Style for pulsing hotel
+const style = document.createElement('style');
+style.textContent = '@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }';
 document.head.appendChild(style);
-
-// Init
-document.getElementById('userNotes')?.addEventListener('input',saveChk);
-migrate();renderAll();loadChk();
-setTimeout(initMap,100);
 </script>
+
 </body>
 </html>
